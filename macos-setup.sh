@@ -44,6 +44,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/inst
 brew install gh k6 awscli kubernetes-cli maven git node@16 vault yarn gnupg pinentry-mac zsh
 
 # Install common applications:
+export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 brew install --cask slack docker lens alt-tab insomnia visual-studio-code aws-vpn-client jetbrains-toolbox okta zoom
 
 # Install extensions for vscode:
