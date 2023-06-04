@@ -39,12 +39,30 @@ fi
 
 # Install Brew:
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+export HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications"
+
+# Install Java:
+brew tap sdkman/tap
+brew install sdkman-cli
+SDKMAN_DIR=$(brew --prefix sdkman-cli)/libexec
+export SDKMAN_DIR
+echo \
+"export SDKMAN_DIR=$(brew --prefix sdkman-cli)/libexec\n\
+[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"" >>$HOME/.zshrc
+[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
+source "$SDKMAN_DIR/bin/sdkman-init.sh"
+chmod -x $SDKMAN_DIR/bin/sdkman-init.sh
+zsh $SDKMAN_DIR/bin/sdkman-init.sh
+sed 's:sdkman_auto_answer=.*:sdkman_auto_answer=true:g' $SDKMAN_DIR/etc/config | tee $SDKMAN_DIR/etc/config
+sdk install java 20.0.1-open
+sdk use java 20.0.1-open
+sdk default java 20.0.1-open
+sed 's:sdkman_auto_answer=.*:sdkman_auto_answer=false:g' $SDKMAN_DIR/etc/config | tee $SDKMAN_DIR/etc/config
 
 # Install common cli tools:
 brew install gh k6 awscli kubernetes-cli maven git node@16 vault yarn gnupg pinentry-mac zsh
 
 # Install common applications:
-export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 brew install --cask slack docker lens alt-tab insomnia visual-studio-code aws-vpn-client jetbrains-toolbox okta zoom
 
 # Install extensions for vscode:
@@ -60,7 +78,7 @@ sed 's:ZSH_THEME=.*:ZSH_THEME="powerlevel10k/powerlevel10k":g' $HOME/.zshrc | te
 # Install Oh My ZSH plugins and font:
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-sed 's:plugins=.*:plugins=(git gh brew aws vault vscode docker docker-compose kubectl mvn zsh-syntax-highlighting zsh-autosuggestions):g' $HOME/.zshrc | tee $HOME/.zshrc
+sed 's:plugins=.*:plugins=(git gh brew aws vault vscode docker docker-compose kubectl mvn sdk zsh-syntax-highlighting zsh-autosuggestions):g' $HOME/.zshrc | tee $HOME/.zshrc
 curl -fsSL https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf >$HOME"/Library/Fonts/MesloLGS NF Regular.ttf"
 osascript -e "tell application \"Terminal\" to set the font name of window 1 to \"MesloLGS NF Regular\""
 
